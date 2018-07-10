@@ -1,7 +1,7 @@
 <template>
   <div align="center" class="hello">
     <h3>Login with username and password</h3>
-    <form @submit.prevent="fetchData"><br/>
+    <form @submit.prevent="handleSubmit"><br/>
       <table>
         <tr>
           <label>
@@ -11,7 +11,7 @@
         </tr>
         <tr>
           <label>
-            <td width="20%" align="right">Name:</td>
+            <td width="20%" align="right">Account Name:</td>
             <td width="80%" align="left"><input type="text" v-model="user.name"/></td>
           </label>
         </tr>
@@ -46,22 +46,25 @@ export default {
   },
   methods: {
     handleSubmit () {
+      this.fetchData()
       // Send data to the server or update your stores and such.
+    },
+    fetchData () {
+      axios.get(`http://localhost:1338/getUser`, this.user.name,
+        {
+          headers: {
+            'Content-type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(function (response) {
+          console.log('got here')
+          this.bp = response.data
+          console.log(this.bp)
+        })
+        .catch(function (e) {
+          this.errors.push(e)
+        })
     }
-  },
-  fetchData () {
-    axios.post(`http://localhost:1338/getUser`, this.user,
-      { headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
-      }})
-      .then(response => {
-        console.log('got here')
-        this.bp = response.data
-        console.log(this.bp)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
   }
 }
 </script>
